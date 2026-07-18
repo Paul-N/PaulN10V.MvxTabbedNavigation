@@ -1,20 +1,29 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>net8.0;net8.0-android;net8.0-ios</TargetFrameworks>
+		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
 		<SingleProject>true</SingleProject>
+		<!-- Ensure resolved assemblies are copied to outputs when referenced by other projects -->
+		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Version>0.0.15</Version>
 
+<!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>-->
+<!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>-->
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
-		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">21.0</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
+		<AndroidSdkCurrentVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</AndroidSdkCurrentVersion>
+		<AndroidMinSdkVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</AndroidMinSdkVersion>
+
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.5</TargetPlatformVersion>
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
 		
 		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="MvvmCross" Version="9.2.0" />
+		<PackageReference Include="MvvmCross" Version="10.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -22,12 +31,12 @@
 		<Compile Remove="Platforms\**\*.*" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" $(TargetFramework.Contains('android')) ">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
 		<Compile Include="Platforms\Shared\**\*.cs" />
 		<Compile Include="Platforms\Android\**\*.cs" />
 	</ItemGroup>
 
-	<ItemGroup Condition=" $(TargetFramework.Contains('ios')) OR $(TargetFramework.Contains('catalyst')) ">
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
 		<Compile Include="Platforms\Shared\**\*.cs" />
 		<Compile Include="Platforms\ios\**\*.cs" />
 		<Compile Include="Platforms\Apple\**\*.cs" />

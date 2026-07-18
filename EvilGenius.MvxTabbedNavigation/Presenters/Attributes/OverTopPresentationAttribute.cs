@@ -1,4 +1,5 @@
-﻿using MvvmCross.Presenters.Attributes;
+﻿using System;
+using MvvmCross.Presenters.Attributes;
 
 namespace EvilGenius.MvxTabbedNavigation.Presenters.Attributes;
 

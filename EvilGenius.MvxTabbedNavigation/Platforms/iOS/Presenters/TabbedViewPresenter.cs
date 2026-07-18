@@ -1,4 +1,6 @@
-﻿using EvilGenius.MvxTabbedNavigation.Presenters.Attributes;
+﻿using System;
+using System.Threading.Tasks;
+using EvilGenius.MvxTabbedNavigation.Presenters.Attributes;
 using EvilGenius.MvxTabbedNavigation.Presenters.Hints;
 using MvvmCross.Platforms.Ios.Presenters;
 using MvvmCross.Platforms.Ios.Presenters.Attributes;
@@ -7,13 +9,14 @@ using MvvmCross.Presenters;
 using MvvmCross.Presenters.Attributes;
 using MvvmCross.Presenters.Hints;
 using MvvmCross.ViewModels;
+using UIKit;
 
 namespace EvilGenius.MvxTabbedNavigation.Platforms.iOS.Presenters;
 
 public class TabbedViewPresenter : MvxIosViewPresenter
 {
     // ReSharper disable once ConvertToPrimaryConstructor
-    public TabbedViewPresenter(IUIApplicationDelegate applicationDelegate, UIWindow window) : base(applicationDelegate, window) { }
+    public TabbedViewPresenter(UIWindow window) : base(window) { }
 
     public override void RegisterAttributeTypes()
     {
@@ -22,8 +25,8 @@ public class TabbedViewPresenter : MvxIosViewPresenter
         AttributeTypesToActionsDictionary.Register<OverTopPresentationAttribute>(
             (_, attribute, request) =>
             {
-                var viewController = (UIViewController)this.CreateViewControllerFor(request);
-                return ShowOverTopViewController(viewController, attribute, request);
+                var viewController = this.CreateViewControllerFor(request) as UIViewController;
+                return ShowOverTopViewController(viewController!, attribute, request);
             },
             CloseOverTopViewController);
     }

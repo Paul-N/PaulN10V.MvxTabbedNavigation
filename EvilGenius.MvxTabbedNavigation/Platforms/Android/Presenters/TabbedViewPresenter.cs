@@ -531,31 +531,41 @@ public class TabbedViewPresenter : MvxAndroidViewPresenter, IDisposable
         _backRequestedSubscription = null;
     }
 
-    protected bool IsTopMostFragmentRoot() 
-        => SingleHostActivity?.FragmentManager.Fragments.Last() == RootFragment && RootFragment != null;
+    private FragmentManager? ToFragmentManager(object? fmObj) => fmObj as FragmentManager;
+
+    protected bool IsTopMostFragmentRoot()
+        => ToFragmentManager(SingleHostActivity?.FragmentManager)?.Fragments.Last() == RootFragment && RootFragment != null;
 
     protected string? GetRootFragmentBackStackId() => GetBackStackId(RootFragment?.FragmentManager);
 
     protected string GetHostActivityBackStackId() => MasterBackStackId;
 
-    protected string? GetBackStackId(FragmentManager? fm) 
-        => fm?.BackStackEntryCount > 0
-           && fm.GetBackStackEntryAt(fm.BackStackEntryCount - 1) is { Name: string backStackId }
+    protected string? GetBackStackId(object? fmObj)
+    {
+        var fm = ToFragmentManager(fmObj);
+        return fm?.BackStackEntryCount > 0
+               && fm.GetBackStackEntryAt(fm.BackStackEntryCount - 1) is { Name: string backStackId }
             ? backStackId
             : null;
+    }
 
     protected bool IsLastFragmentPresentedInRootFragment() => IsLastFragmentPresented(RootFragment?.FragmentManager);
 
     protected bool IsLastFragmentPresentedInHostActivity() => IsLastFragmentPresented(SingleHostActivity?.FragmentManager);
 
-    protected bool IsLastFragmentPresented(FragmentManager? fm) => !(fm?.BackStackEntryCount > 1);
+    protected bool IsLastFragmentPresented(object? fmObj)
+    {
+        var fm = ToFragmentManager(fmObj);
+        return !(fm?.BackStackEntryCount > 1);
+    }
 
     protected int? GetFirstFragmentIdInRootFrag() => GetFirstFragmentIdInStackStack(RootFragment?.FragmentManager);
 
     protected int? GetFirstFragmentIdInHost() => GetFirstFragmentIdInStackStack(SingleHostActivity?.FragmentManager);
 
-    private int? GetFirstFragmentIdInStackStack(FragmentManager? fragmentManager)
+    private int? GetFirstFragmentIdInStackStack(object? fragmentManagerObj)
     {
+        var fragmentManager = ToFragmentManager(fragmentManagerObj);
         //if (fragmentManager != null)
         //{
         //    var ids = Enumerable.Range(0, fragmentManager.BackStackEntryCount).Select(i => { var bse = fragmentManager.GetBackStackEntryAt(i);

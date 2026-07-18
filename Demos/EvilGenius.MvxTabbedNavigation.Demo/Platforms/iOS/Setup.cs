@@ -26,7 +26,7 @@ public class Setup : MvxIosSetup<App>
 
     protected override ILoggerProvider CreateLogProvider() => new SerilogLoggerProvider();
 
-    protected override IMvxIosViewPresenter CreateViewPresenter() => new TabbedViewPresenter(ApplicationDelegate!, Window!);
+    protected override IMvxIosViewPresenter CreateViewPresenter() => new TabbedViewPresenter(Window!);
 
 //The plugin assemblies are skipped in net6.0. Why?
     public override IEnumerable<Assembly> GetPluginAssemblies() 

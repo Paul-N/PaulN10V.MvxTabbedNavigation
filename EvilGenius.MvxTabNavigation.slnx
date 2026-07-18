@@ -1,0 +1,15 @@
+<Solution>
+<!--  <Folder Name="/">-->
+<!--    <File Path="README.md" />-->
+<!--  </Folder>-->
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Demos/">
+    <Project Path="Demos/EvilGenius.MvxTabbedNavigation.Demo.Core/EvilGenius.MvxTabbedNavigation.Demo.Core.csproj" />
+    <Project Path="Demos/EvilGenius.MvxTabbedNavigation.Demo/EvilGenius.MvxTabbedNavigation.Demo.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Project Path="EvilGenius.MvxTabbedNavigation/EvilGenius.MvxTabbedNavigation.csproj" />
+</Solution>
