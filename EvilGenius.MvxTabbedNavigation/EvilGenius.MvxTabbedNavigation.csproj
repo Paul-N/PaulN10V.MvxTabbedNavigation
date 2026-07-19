@@ -2,8 +2,7 @@
 	<PropertyGroup>
 		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
 		<SingleProject>true</SingleProject>
-		<!-- Ensure resolved assemblies are copied to outputs when referenced by other projects -->
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>

@@ -20,7 +20,6 @@
 		<ApplicationDisplayVersion>1.0</ApplicationDisplayVersion>
 		<ApplicationVersion>1</ApplicationVersion>
 		<!-- Ensure referenced assemblies are copied to the output for Android builds -->
-		<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
 
 <!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>-->
 		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'maccatalyst'">14.0</SupportedOSPlatformVersion>
@@ -31,7 +30,7 @@
 		<AndroidSdkCurrentVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</AndroidSdkCurrentVersion>
 		<AndroidMinSdkVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</AndroidMinSdkVersion>
 
-		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.2</TargetPlatformVersion>
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.5</TargetPlatformVersion>
 		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
 	</PropertyGroup>
 
@@ -69,40 +68,24 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <!-- Ensure the demo references the correct TFM output of the library project when building each TFM -->
-		<ProjectReference Include="..\..\EvilGenius.MvxTabbedNavigation\EvilGenius.MvxTabbedNavigation.csproj">
-		<!-- Forward the current TargetFramework so the referenced project builds the matching TFM (e.g., net10.0-android) -->
-		<TargetFramework>$(TargetFramework)</TargetFramework>
-		<!-- Ensure the referenced project's runtime assembly is copied into the consuming project's output -->
-		<Private>true</Private>
-	  </ProjectReference>
+	  <ProjectReference Include="..\..\EvilGenius.MvxTabbedNavigation\EvilGenius.MvxTabbedNavigation.csproj" />
 	  <ProjectReference Include="..\EvilGenius.MvxTabbedNavigation.Demo.Core\EvilGenius.MvxTabbedNavigation.Demo.Core.csproj" />
 	</ItemGroup>
 
-	<!-- Fallback: when building Android, reference the compiled Android output of the library to ensure the assembly is available
-		 to the Xamarin.Android linker/Java.Interop scanner. This is a pragmatic workaround to make sure ISingleHostActivity
-		 is present in the Demo's assembly set during the LinkAssembliesNoShrink step. -->
-	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
-	  <Reference Include="EvilGenius.MvxTabbedNavigation">
-		<HintPath>..\..\EvilGenius.MvxTabbedNavigation\bin\$(Configuration)\net10.0-android\EvilGenius.MvxTabbedNavigation.dll</HintPath>
-		<Private>true</Private>
-		<EmbedInteropTypes>false</EmbedInteropTypes>
-	  </Reference>
-	</ItemGroup>
+	<!-- Copy the resolved ProjectReference output for the library into the Demo's intermediate
+		 linker folders so Java.Interop can resolve platform-specific interface types. This uses
+		 the resolved ReferenceCopyLocalPaths item (populated by ResolveAssemblyReferences) so
+		 the correct per-TFM runtime assembly is used rather than a hard-coded hint path. -->
+	<Target Name="CopyProjectReferenceOutputsToLinker" BeforeTargets="_LinkAssembliesNoShrink;LinkAssembliesNoShrink" Condition="'$(TargetFramework)' == 'net10.0-android'">
+	  <ItemGroup>
+		<!-- pick the resolved copy-local references that match the library assembly filename -->
+		<_LibraryResolvedAssembly Include="@(ReferenceCopyLocalPaths)" Condition=" '%(ReferenceCopyLocalPaths.Filename)' == 'EvilGenius.MvxTabbedNavigation' " />
+	  </ItemGroup>
 
-  <!-- Ensure the library's Android-built assembly is present in the intermediate linker folders before the
-	   Xamarin.Android LinkAssembliesNoShrink step so Java.Interop can resolve platform-specific types. -->
-  <Target Name="CopyLibraryIntoLinkerPath" BeforeTargets="_LinkAssembliesNoShrink;LinkAssembliesNoShrink" Condition="'$(TargetFramework)' == 'net10.0-android'">
-	<PropertyGroup>
-	  <LibrarySourcePath>..\..\EvilGenius.MvxTabbedNavigation\bin\$(Configuration)\net10.0-android\EvilGenius.MvxTabbedNavigation.dll</LibrarySourcePath>
-	  <LinkerDestDir>$(IntermediateOutputPath)lp\999\jl\</LinkerDestDir>
-	</PropertyGroup>
+	  <Message Importance="high" Text="Copying resolved project reference assemblies: %(_LibraryResolvedAssembly.Identity) -> $(IntermediateOutputPath)lp\999\jl\" />
 
-	<Message Importance="high" Text="Copying library assembly for Java.Interop scanning: $(LibrarySourcePath) -> $(LinkerDestDir)" />
-
-	<MakeDir Directories="$(LinkerDestDir)" />
-	<Copy SourceFiles="$(LibrarySourcePath)" DestinationFolder="$(LinkerDestDir)" SkipUnchangedFiles="true" />
-	<!-- Also copy to the intermediate output root so the assembly resolver can find it -->
-	<Copy SourceFiles="$(LibrarySourcePath)" DestinationFolder="$(IntermediateOutputPath)" SkipUnchangedFiles="true" />
-  </Target>
+	  <MakeDir Directories="$(IntermediateOutputPath)lp\999\jl\" />
+	  <Copy SourceFiles="@(_LibraryResolvedAssembly)" DestinationFolder="$(IntermediateOutputPath)lp\999\jl\" SkipUnchangedFiles="true" />
+	  <Copy SourceFiles="@(_LibraryResolvedAssembly)" DestinationFolder="$(IntermediateOutputPath)" SkipUnchangedFiles="true" />
+	</Target>
 </Project>
