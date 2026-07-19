@@ -12,7 +12,6 @@ namespace EvilGenius.MvxTabbedNavigation.Demo.Platforms.Android.Activities;
 [Activity(Theme = "@style/AppTheme.NoActionBar")]
 public class MainActivity : MvxActivity, ISingleHostActivity
 {
-    [System.Diagnostics.CodeAnalysis.DynamicDependency(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.All, typeof(ISingleHostActivity))]
     protected override void OnCreate(Bundle savedInstanceState)
     {
         base.OnCreate(savedInstanceState);

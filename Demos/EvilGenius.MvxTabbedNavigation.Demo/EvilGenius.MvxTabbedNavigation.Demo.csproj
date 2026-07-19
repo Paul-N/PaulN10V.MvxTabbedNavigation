@@ -30,7 +30,7 @@
 		<AndroidSdkCurrentVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</AndroidSdkCurrentVersion>
 		<AndroidMinSdkVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</AndroidMinSdkVersion>
 
-		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.5</TargetPlatformVersion>
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.0</TargetPlatformVersion>
 		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
 	</PropertyGroup>
 
