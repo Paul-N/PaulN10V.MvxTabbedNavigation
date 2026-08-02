@@ -1,0 +1,42 @@
+FROM mcr.microsoft.com/dotnet/sdk:6.0.428-1-bookworm-slim-amd64
+# Pin MAUI workload-set version to latest 6.x
+ARG MAUI_WORKLOAD_VERSION="6.0.553"
+ENV MAUI_WORKLOAD_VERSION=${MAUI_WORKLOAD_VERSION}
+
+# Install OS packages
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    unzip wget curl git ca-certificates gnupg2 lsb-release apt-transport-https && \
+    rm -rf /var/lib/apt/lists/* && \
+    # Add Microsoft package repository and install Microsoft Build of OpenJDK 11
+    wget https://packages.microsoft.com/config/debian/$(lsb_release -rs)/packages-microsoft-prod.deb -O /tmp/packages-microsoft-prod.deb && \
+    dpkg -i /tmp/packages-microsoft-prod.deb && rm /tmp/packages-microsoft-prod.deb && \
+    apt-get update && apt-get install -y --no-install-recommends msopenjdk-11 && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV JAVA_HOME=/usr/lib/jvm/msopenjdk-11-amd64
+ENV PATH=$PATH:$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/platform-tools
+
+# Install Android command-line tools
+RUN mkdir -p $ANDROID_SDK_ROOT && \
+    cd /tmp && \
+    wget -q https://dl.google.com/android/repository/commandlinetools-linux-7583922_latest.zip -O cmdline.zip && \
+    unzip cmdline.zip -d $ANDROID_SDK_ROOT/cmdline-tools && \
+    mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest && \
+    rm cmdline.zip && \
+    yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT --licenses || true
+
+# Install essential Android packages (platform-tools, build-tools, platforms)
+RUN yes | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --sdk_root=$ANDROID_SDK_ROOT "platform-tools" "platforms;android-33" "platforms;android-31" "build-tools;33.0.2" "ndk;25.2.9519653" || true
+
+# Install MAUI Android workload (use SDK's default dotnet)
+RUN dotnet workload install maui-android || true;
+
+WORKDIR /work
+
+# NOTE: This Dockerfile intentionally does NOT copy or run build-maui.sh.
+# Mount the script at runtime: e.g.
+# docker run --rm -v $(pwd)/build-maui.sh:/work/build-maui.sh --platform linux/amd64 -it <image> bash
+
+CMD ["bash"]

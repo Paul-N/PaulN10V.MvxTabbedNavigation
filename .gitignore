@@ -361,3 +361,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+#!Local specific
+
+/sources/*
+/csproj-backups/*
+/maui-output/*
