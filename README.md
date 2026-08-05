@@ -3,18 +3,24 @@ Usage: build .apk with debug symbols using the provided Docker builder
 1) Build the image (from repo root):
 
 ```bash
-   docker build -f DockerfileMaui6 -t maui6 .
-   docker build -f DockerfileMaui8 -t maui8 .
-   docker build -f DockerfileMaui10 -t maui10 .
+   docker build -f DockerfileMaui6 -t maui6 --platform linux/amd64 .
+   docker build -f DockerfileMaui8 -t maui8 --platform linux/amd64 .
+   docker build -f DockerfileMaui10 -t maui10 --platform linux/amd64 .
 ```
 
 2) Run the builder to build a specific git ref (output is written to a host folder):
 
-```bash   
+```bash
 docker run --rm \
-     -e CONFIGURATION="Debug" \
-     -v "$(pwd)/maui-output:/output" \
-   maui6
+  --platform linux/amd64 \
+  -v /Users/pauln/Projects/EvilGenius.MvxTabbedNavigation.Docker/sources:/sources \
+  -v /Users/pauln/Projects/EvilGenius.MvxTabbedNavigation.Docker/maui-output:/output \
+  -v /Users/pauln/Projects/EvilGenius.MvxTabbedNavigation.Docker/build-maui.sh:/work/build-maui.sh \
+  -w /work \
+  -e FRAMEWORK="net6.0-android" \
+  -e CONFIGURATION="RELEASE" \
+  -it maui6 \
+  bash -c "/work/build-maui.sh" 
 ```
 Notes:
 - The image installs OpenJDK 17 and Android command-line tools and the maui-android workload.
