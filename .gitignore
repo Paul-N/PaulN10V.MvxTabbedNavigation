@@ -366,4 +366,4 @@ FodyWeavers.xsd
 
 /sources/*
 /csproj-backups/*
-/maui-output/*
+/output/*

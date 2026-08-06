@@ -5,8 +5,8 @@ shopt -s nullglob
 PROJECT_PATH="${PROJECT_PATH:-Demos/EvilGenius.MvxTabbedNavigation.Demo/EvilGenius.MvxTabbedNavigation.Demo.csproj}"
 SOURCES_DIR="${SOURCES_DIR:-/sources}"
 FRAMEWORK="${FRAMEWORK:-net6.0-android}"
-CONFIGURATION="${CONFIGURATION:-Release}"
-OUTPUT_DIR="${OUTPUT_DIR:-/output}"
+CONFIGURATION="Release"
+OUTPUT_DIR="/output"
 # Wipe obj/ and bin/ before building. The sources tree is bind-mounted and shared
 # between the host IDE and several SDK images, so stale intermediates from a
 # different SDK can produce an APK that segfaults during runtime init.
@@ -20,6 +20,21 @@ if [[ "$PROJECT_PATH" = /* ]]; then
   proj="$PROJECT_PATH"
 else
   proj="$SOURCES_DIR/$PROJECT_PATH"
+fi
+
+# Normalize path: resolve ./ and ensure .csproj extension
+proj="$(cd "$(dirname "$proj")" && pwd)/$(basename "$proj")"
+if [[ "$proj" != *.csproj ]]; then
+  csproj_files=("$proj"*.csproj)
+  if [ ${#csproj_files[@]} -eq 1 ]; then
+    proj="${csproj_files[0]}"
+  elif [ ${#csproj_files[@]} -gt 1 ]; then
+    echo "Multiple .csproj files found in $proj" >&2
+    exit 1
+  else
+    echo "No .csproj file found in $proj" >&2
+    exit 1
+  fi
 fi
 
 if [ ! -f "$proj" ]; then

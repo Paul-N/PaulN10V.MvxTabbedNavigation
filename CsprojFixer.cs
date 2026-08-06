@@ -103,46 +103,29 @@ fixCommand.SetAction(parseResult =>
     });
     
 });
-restoreCommand.SetAction(_ => { Console.WriteLine("restore"); });
+restoreCommand.SetAction(parseResult =>
+{
+    var paths = new[]
+    {
+        pathLib, pathDemoCore, pathDemoApp
+    }.ToList();
 
-// rootCommand.SetAction(async (parseResult, _) =>
-// {
-//     try
-//     {
-//         var baseUri = parseResult.GetValue(backupOption) switch
-//         {
-//             "dev" => "http://localhost:8003",
-//             "prod" => "https://id.n10v.me",
-//             _ => null
-//         };
-//
-//         if (baseUri is null)
-//         {
-//             Console.WriteLine("Invalid environment");
-//             return await Task.FromResult(-1);
-//         }
-//
-//         if (parseResult.GetValue(restoreOption) is string token)
-//         {
-//             var refresher = new TokenRefresher(baseUri);
-//
-//             var result = await refresher.RefreshTokenAsync(token);
-//
-//             Console.WriteLine(result != null ? result : "Failed to refresh token.");
-//             return result != null ? 0: -1;
-//         }
-//         else
-//         {
-//             Console.WriteLine("No token provided.");
-//             return -1;
-//         }
-//     }
-//     catch (Exception e)
-//     {
-//         Console.WriteLine(e);
-//         return -1;
-//     }
-// });
+    paths.ForEach(path =>
+    {
+        var fullPath = Path.Combine(scriptDir, path);
+        var backupPath = Path.Combine(scriptDir, "csproj-backups", Path.GetFileName(fullPath));
+        
+        if (File.Exists(backupPath))
+        {
+            File.Copy(backupPath, fullPath, true);
+            Console.WriteLine($"Restored {Path.GetFileName(fullPath)} from backup");
+        }
+        else
+        {
+            Console.WriteLine($"Backup not found: {backupPath}");
+        }
+    });
+});
 
 return await rootCommand.Parse(args).InvokeAsync();
 
