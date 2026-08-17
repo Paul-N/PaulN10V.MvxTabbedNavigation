@@ -205,6 +205,28 @@ public class TabbedViewPresenter : MvxAndroidViewPresenter, IDisposable
         return Task.FromResult(result);
     }
 
+    protected override Task<bool> CloseFragment(IMvxViewModel viewModel, MvxFragmentPresentationAttribute attribute)
+    {
+        var result = false;
+
+        if (IsTopMostFragmentRoot() && RootFragment is { FragmentManager: FragmentManager rootFm })
+        {
+            
+            rootFm.PopBackStack();
+            result = true;
+        }
+        else if(SingleHostActivity is { FragmentManager: FragmentManager singleHostFm })
+        {
+            singleHostFm.PopBackStack();
+            result = true;
+        }
+
+        return Task.FromResult(result);
+        
+        
+        return base.CloseFragment(viewModel, attribute);
+    }
+
     private Task<bool> ShowTabFragment(Type type, TabPresentationAttribute attribute, MvxViewModelRequest vmRequest)
     {
         if (RootFragment == null)
@@ -330,23 +352,22 @@ public class TabbedViewPresenter : MvxAndroidViewPresenter, IDisposable
         return Task.FromResult(false);
     }
 
-    private Task<bool> CloseFragmentOverTop(IMvxViewModel viewModel, OverTopPresentationAttribute attribute)
+    private Task<bool> CloseFragmentOverTop(IMvxViewModel viewModel, OverTopPresentationAttribute overTopAttribute)
     {
-        if (SingleHostActivity?.ContainerId is int containerId)
+        if (SingleHostActivity is { FragmentManager: FragmentManager fm, ContainerId: var containerId })
         {
-            MvxFragmentPresentationAttribute presentationAttr = new MvxFragmentPresentationAttribute
+            MvxFragmentPresentationAttribute attribute = new MvxFragmentPresentationAttribute
             {
                 AddFragment = false,
                 AddToBackStack = false,
-                ViewType = attribute.ViewType,
-                //FragmentHostViewType = this.SingleHostActivity?.GetType(),
-                FragmentContentId = containerId
+                ViewType = overTopAttribute.ViewType,
+                FragmentContentId = containerId,
+                Tag = nameof(OverTopPresentationAttribute)
             };
-
-            return CloseFragment(viewModel, presentationAttr);
+            var result = TryPerformCloseFragmentTransaction(fm, attribute);
+            return Task.FromResult(result);
         }
-        else
-            return Task.FromResult(false);
+        return Task.FromResult(false);
     }
 
     protected override void OnBeforeFragmentChanging(FragmentTransaction fragmentTransaction, Fragment fragment, MvxFragmentPresentationAttribute attribute, MvxViewModelRequest request)
@@ -518,6 +539,18 @@ public class TabbedViewPresenter : MvxAndroidViewPresenter, IDisposable
             return true;
         }
         return false;
+    }
+
+    protected override bool TryPerformCloseFragmentTransaction(FragmentManager fragmentManager,
+        MvxFragmentPresentationAttribute fragmentAttribute)
+    {
+        if (fragmentAttribute.Tag == nameof(OverTopPresentationAttribute))
+        {
+            fragmentManager.PopBackStack();
+            return true;
+        }
+
+        return base.TryPerformCloseFragmentTransaction(fragmentManager, fragmentAttribute);
     }
 
     private void ClearHostActivitySubscriptions()
