@@ -1,4 +1,4 @@
-# EvilGenius.MvxTabbedNavigation
+# PaulN10V.MvxTabbedNavigation
 
 Multiple backstack navigation for MvvmCross.
 
@@ -29,7 +29,7 @@ The library enables each tab in a tabbed navigation to maintain its own backstac
 Install the NuGet package:
 
 ```bash
-dotnet add package EvilGenius.MvxTabbedNavigation
+dotnet add package PaulN10V.MvxTabbedNavigation
 ```
 
 ## Usage
@@ -83,7 +83,7 @@ await navigationService.ChangePresentation(new ClearStackPresentationHint());
 
 ## Demo
 
-See the **EvilGenius.MvxTabbedNavigation.Demo** project for a complete example showing:
+See the **PaulN10V.MvxTabbedNavigation.Demo** project for a complete example showing:
 
 - Tabbed navigation with multiple tabs
 - Tab-specific backstacks

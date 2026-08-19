@@ -1,0 +1,16 @@
+<Solution>
+<!--  <Folder Name="/">-->
+<!--    <File Path="README.md" />-->
+<!--  </Folder>-->
+  <Folder Name="/Solution Items/">
+    <File Path="pack.bat" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/Demos/">
+    <Project Path="Demos\PaulN10V.MvxTabbedNavigation.Demo.Core\PaulN10V.MvxTabbedNavigation.Demo.Core.csproj" />
+    <Project Path="Demos\PaulN10V.MvxTabbedNavigation.Demo\PaulN10V.MvxTabbedNavigation.Demo.csproj">
+      <Deploy />
+    </Project>
+  </Folder>
+  <Project Path="PaulN10V.MvxTabbedNavigation\PaulN10V.MvxTabbedNavigation.csproj" />
+</Solution>

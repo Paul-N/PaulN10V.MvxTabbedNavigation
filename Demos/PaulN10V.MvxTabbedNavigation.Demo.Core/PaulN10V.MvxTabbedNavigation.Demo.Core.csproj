@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MvvmCross" Version="10.1.2" />
+		<PackageReference Include="MvvmCross.Plugin.Messenger" Version="10.1.2" />
+		<PackageReference Include="Microsoft.Maui.Essentials" Version="10.0.20" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\PaulN10V.MvxTabbedNavigation\PaulN10V.MvxTabbedNavigation.csproj" />
+	</ItemGroup>
+
+</Project>

@@ -1,1 +1,1 @@
-dotnet pack %~dp0\EvilGenius.MvxTabbedNavigation\EvilGenius.MvxTabbedNavigation.csproj --no-build
+dotnet pack %~dp0\PaulN10V.MvxTabbedNavigation\PaulN10V.MvxTabbedNavigation.csproj --no-build
