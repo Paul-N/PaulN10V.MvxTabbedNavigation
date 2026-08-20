@@ -7,7 +7,7 @@
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
 		<Authors>Paul N10V</Authors>
-		<Version>0.1.0</Version>
+		<Version>0.1.1</Version>
 		<Description>Multiple backstack navigation for MvvmCross tabbed apps on Android and iOS.</Description>
 		<PackageProjectUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation</PackageProjectUrl>
 		<RepositoryUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation.git</RepositoryUrl>
@@ -29,7 +29,7 @@
 <!--		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.0</TargetPlatformVersion>-->
 		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
 		
-		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+<!--		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>-->
 	</PropertyGroup>
 
 	<ItemGroup>
