@@ -6,7 +6,17 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>latest</LangVersion>
 		<Nullable>enable</Nullable>
+		<Authors>Paul N10V</Authors>
 		<Version>0.1.0</Version>
+		<Description>Multiple backstack navigation for MvvmCross tabbed apps on Android and iOS.</Description>
+		<PackageProjectUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+		<PackageTags>mvvmcross;maui;xamarin;android;ios;navigation;tabbed;backstack</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 <!--		<ValidateXcodeVersion>false</ValidateXcodeVersion>-->
 
 <!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>-->
@@ -24,6 +34,10 @@
 
 	<ItemGroup>
 		<PackageReference Include="MvvmCross" Version="10.1.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>

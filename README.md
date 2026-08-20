@@ -26,10 +26,16 @@ The library enables each tab in a tabbed navigation to maintain its own backstac
 
 ## Installation
 
-Install the NuGet package:
+This package is published to **GitHub Packages**, not nuget.org. GitHub Packages requires authentication to consume a feed even for public packages, so add an authenticated source first (a [personal access token](https://github.com/settings/tokens) with `read:packages` scope is enough):
 
 ```bash
-dotnet add package PaulN10V.MvxTabbedNavigation
+dotnet nuget add source --username <YOUR_GITHUB_USERNAME> --password <YOUR_GITHUB_PAT> --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Paul-N/index.json"
+```
+
+Then install the package:
+
+```bash
+dotnet add package PaulN10V.MvxTabbedNavigation --source github
 ```
 
 ## Usage

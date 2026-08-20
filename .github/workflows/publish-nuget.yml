@@ -1,0 +1,37 @@
+name: Publish NuGet package
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Install mobile workloads
+        run: dotnet workload install android ios maccatalyst maui
+
+      - name: Derive package version from tag
+        run: echo "PACKAGE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+
+      - name: Pack
+        run: dotnet pack PaulN10V.MvxTabbedNavigation/PaulN10V.MvxTabbedNavigation.csproj -c Release -p:PackageVersion=${{ env.PACKAGE_VERSION }} -o out
+
+      - name: Add GitHub Packages source
+        run: dotnet nuget add source --username Paul-N --password ${{ secrets.GITHUB_TOKEN }} --store-password-in-clear-text --name github "https://nuget.pkg.github.com/Paul-N/index.json"
+
+      - name: Push package
+        run: dotnet nuget push "out/*.nupkg" --api-key ${{ secrets.GITHUB_TOKEN }} --source github --skip-duplicate
