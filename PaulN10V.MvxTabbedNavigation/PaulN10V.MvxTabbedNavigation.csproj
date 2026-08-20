@@ -1,0 +1,58 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFrameworks>net10.0;net10.0-android;net10.0-ios</TargetFrameworks>
+		<SingleProject>true</SingleProject>
+
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>latest</LangVersion>
+		<Nullable>enable</Nullable>
+		<Authors>Paul N10V</Authors>
+		<Version>0.1.0</Version>
+		<Description>Multiple backstack navigation for MvvmCross tabbed apps on Android and iOS.</Description>
+		<PackageProjectUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/Paul-N/PaulN10V.MvxTabbedNavigation.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageLicenseExpression>MS-PL</PackageLicenseExpression>
+		<PackageTags>mvvmcross;maui;xamarin;android;ios;navigation;tabbed;backstack</PackageTags>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+<!--		<ValidateXcodeVersion>false</ValidateXcodeVersion>-->
+
+<!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>-->
+<!--		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>-->
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">14.2</SupportedOSPlatformVersion>
+		<SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</SupportedOSPlatformVersion>
+		<AndroidSdkCurrentVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</AndroidSdkCurrentVersion>
+		<AndroidMinSdkVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">23.0</AndroidMinSdkVersion>
+
+<!--		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">26.0</TargetPlatformVersion>-->
+		<TargetPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'android'">36.0</TargetPlatformVersion>
+		
+		<GeneratePackageOnBuild Condition="'$(Configuration)' == 'Release' ">true</GeneratePackageOnBuild>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="MvvmCross" Version="10.1.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Include="Platforms\**\*.*" />
+		<Compile Remove="Platforms\**\*.*" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-android'">
+		<Compile Include="Platforms\Shared\**\*.cs" />
+		<Compile Include="Platforms\Android\**\*.cs" />
+	</ItemGroup>
+
+	<ItemGroup Condition="'$(TargetFramework)' == 'net10.0-ios'">
+		<Compile Include="Platforms\Shared\**\*.cs" />
+		<Compile Include="Platforms\ios\**\*.cs" />
+		<Compile Include="Platforms\Apple\**\*.cs" />
+	</ItemGroup>
+</Project>
