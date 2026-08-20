@@ -8,8 +8,6 @@
 
 
 using System.CommandLine;
-using System.Net.Http.Json;
-using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
@@ -75,8 +73,8 @@ fixCommand.SetAction(parseResult =>
         var fullPath = Path.Combine(scriptDir, path);
         if (File.Exists(fullPath))
         {
-            var projectXml = System.Xml.Linq.XDocument.Load(fullPath);
-            var ns = System.Xml.Linq.XNamespace.Get("http://schemas.microsoft.com/developer/msbuild/2003");
+            var projectXml = XDocument.Load(fullPath);
+            var ns = XNamespace.Get("http://schemas.microsoft.com/developer/msbuild/2003");
             
             var tfmElement = projectXml.Root?.Element("PropertyGroup")?.Element("TargetFrameworks") ??
                             projectXml.Root?.Descendants("TargetFrameworks").FirstOrDefault();
@@ -128,56 +126,3 @@ restoreCommand.SetAction(parseResult =>
 });
 
 return await rootCommand.Parse(args).InvokeAsync();
-
-class TokenRefresher
-{
-    private readonly string _baseUri;
-
-    public TokenRefresher(string baseUri)
-    {
-        _baseUri = baseUri;
-    }
-    
-    public async Task<RefreshedTokenResponse?> RefreshTokenAsync(string refreshToken)
-    {
-        using var client = new HttpClient();
-        
-        client.BaseAddress = new Uri(_baseUri);
-
-        var formData = new Dictionary<string, string>
-        {
-            { "grant_type", "refresh_token" },
-            { "refresh_token", refreshToken},
-            { "client_id", "native.app" }
-        };
-
-        var content = new FormUrlEncodedContent(formData);
-
-        content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("application/x-www-form-urlencoded");
-        client.DefaultRequestHeaders.Accept.Add(
-            new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
-
-        var response = await client.PostAsync("/realms/smsresender/protocol/openid-connect/token", content);
-
-        var context = RefreshTokenResponseContext.Default;
-        var jsonTypeInfo =  context.RefreshedTokenResponse;
-        return await response.Content.ReadFromJsonAsync(jsonTypeInfo, CancellationToken.None);
-    }
-}
-
-
-[JsonSerializable(typeof(RefreshedTokenResponse))]
-internal partial class RefreshTokenResponseContext : JsonSerializerContext
-{
-}
-
-public record RefreshedTokenResponse(
-    [property: JsonPropertyName("access_token")] string AccessToken,
-    [property: JsonPropertyName("expires_in")] int ExpiresIn,
-    [property: JsonPropertyName("refresh_expires_in")] int RefreshExpiresIn,
-    [property: JsonPropertyName("refresh_token")] string RefreshToken,
-    [property: JsonPropertyName("token_type")] string TokenType,
-    [property: JsonPropertyName("not-before-policy")] int NotBeforePolicy,
-    [property: JsonPropertyName("session_state")] string SessionState,
-    [property: JsonPropertyName("scope")] string Scope
-);
